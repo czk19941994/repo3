@@ -36,7 +36,6 @@ public class ExceptionCatch {
         LOGGER.error("catch exception:{}",exception.getMessage());
         if (EXCEPTIONS==null){
           EXCEPTIONS=  builder.build();//exception构建成功
-
         }
         ResultCode resultCode = (ResultCode) EXCEPTIONS.get(exception.getClass());
         if(resultCode!=null){
