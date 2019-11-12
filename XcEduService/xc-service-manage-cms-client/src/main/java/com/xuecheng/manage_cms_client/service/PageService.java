@@ -1,4 +1,6 @@
 package com.xuecheng.manage_cms_client.service;
+
+
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
@@ -10,12 +12,12 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
-
 import java.io.*;
 import java.util.Optional;
 
@@ -24,10 +26,9 @@ public class PageService {
     //日志
     private static final Logger LOGGER= LoggerFactory.getLogger(PageService.class);
     @Autowired
-    private GridFSBucket gridFSBucket;
-    @Autowired
     private GridFsTemplate gridFsTemplate;
-
+    @Qualifier("GridFSBucketImpl")
+    private GridFSBucket gridFSBucket;
     @Autowired
     private CmsPageRepository cmsPageRepository;
     @Autowired

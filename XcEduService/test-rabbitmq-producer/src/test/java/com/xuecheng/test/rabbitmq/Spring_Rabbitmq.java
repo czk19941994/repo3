@@ -21,9 +21,9 @@ public class Spring_Rabbitmq {
     @Test
     public void sendEmail(){
         /**
-         * 参数 1 交换机
+         * 参数 1 交换机名称
          * 2 routingkey
-         * 3
+         * 3 Object 发送的消息
          */
         rabbitTemplate.convertAndSend(EXCHANGE_TOPICS_INFORM,"routingkey_email","陈彰坤");
     }

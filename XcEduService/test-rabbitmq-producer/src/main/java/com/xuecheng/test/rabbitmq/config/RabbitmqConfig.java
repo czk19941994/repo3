@@ -14,7 +14,7 @@ public class RabbitmqConfig {
     public static final String QUEUE_INFORM_SMS = "queue_inform_sms";
     //交换机
     public static final String EXCHANGE_TOPICS_INFORM="exchange_topics_inform";
-    //声明减缓及
+    //声明交换机
     @Bean(EXCHANGE_TOPICS_INFORM)
     public Exchange EXCHANGE_TOPICS_INFORM(){
         //durable 持久化

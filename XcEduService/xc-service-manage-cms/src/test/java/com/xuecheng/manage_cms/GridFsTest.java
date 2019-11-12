@@ -17,13 +17,19 @@ import java.io.InputStream;
 public class GridFsTest {
     @Autowired
     private GridFsTemplate gridFsTemplate;
+
     //存文件
     @Test
-    public void testGridFsTemplate()throws Exception{
+    public void testGridFsTemplate() throws Exception {
         //流
-        File file=new File("G:\\学成在线资料\\freemarker模板文件\\index_banner.ftl");
-        InputStream inputStream=new FileInputStream(file);
+        File file = new File("G:\\学成在线资料\\freemarker模板文件\\index_banner.ftl");
+        InputStream inputStream = new FileInputStream(file);
         ObjectId objectId = gridFsTemplate.store(inputStream, "index_banner.ftl");
         System.out.println(objectId);
     }
+  /*@Test
+    public void fun(){
+        Son son=new Son();
+        son.print(5);
+  }*/
 }
