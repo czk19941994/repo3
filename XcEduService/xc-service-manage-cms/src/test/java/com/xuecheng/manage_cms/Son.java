@@ -40,6 +40,6 @@ public class Son extends Person<Date> {
         Collections.sort(staff);
         int ccc = Collections.binarySearch(staff, "ccc");
         System.out.println(ccc);
-        System.out.println();
+
     }
 }
