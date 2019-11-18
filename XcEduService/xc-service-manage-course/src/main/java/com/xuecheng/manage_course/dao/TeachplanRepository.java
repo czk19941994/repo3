@@ -5,7 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+/**
+ * Created by Administrator.
+ */
 public interface TeachplanRepository extends JpaRepository<Teachplan,String> {
-    //根据kechengid和parantid=0来查
-    List<Teachplan> findByCourseidAndParentid(String courseid,String parentid);
+    //SELECT * FROM teachplan WHERE courseid = '297e7c7c62b888f00162b8a7dec20000' AND parentid='0'
+    List<Teachplan> findByCourseidAndParentid(String courseId,String parentId);
 }
