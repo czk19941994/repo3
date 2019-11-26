@@ -1,12 +1,14 @@
 package com.xuecheng.manage_course.service;
 
 import com.xuecheng.framework.domain.course.CourseBase;
+import com.xuecheng.framework.domain.course.CoursePic;
 import com.xuecheng.framework.domain.course.Teachplan;
 import com.xuecheng.framework.domain.course.ext.TeachplanNode;
 import com.xuecheng.framework.exception.ExceptionCast;
 import com.xuecheng.framework.model.response.CommonCode;
 import com.xuecheng.framework.model.response.ResponseResult;
 import com.xuecheng.manage_course.dao.CourseBaseRepository;
+import com.xuecheng.manage_course.dao.CoursePicRepository;
 import com.xuecheng.manage_course.dao.TeachplanMapper;
 import com.xuecheng.manage_course.dao.TeachplanRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +26,8 @@ import java.util.Optional;
  **/
 @Service
 public class CourseService {
+    @Autowired
+    private CoursePicRepository coursePicRepository;
     @Autowired
     TeachplanMapper teachplanMapper;
 
@@ -98,5 +102,37 @@ public class CourseService {
         //返回根结点的id
         return teachplanList.get(0).getId();
 
+    }
+    //想课程管理数据库添加课程图片管理信息
+    @Transactional
+    public ResponseResult addCoursePic(String courseId,String pic){
+        CoursePic coursePic=null;
+        Optional<CoursePic> byId = coursePicRepository.findById(courseId);
+        if (byId.isPresent()){
+            coursePic=byId.get();
+        }
+        if (coursePic==null){
+             coursePic=new CoursePic();
+        }
+        coursePic.setPic(pic);
+        coursePic.setCourseid(courseId);
+        coursePicRepository.save(coursePic);
+        return new ResponseResult(CommonCode.SUCCESS);
+    }
+
+    public CoursePic findCoursePic(String courseId) {
+        Optional<CoursePic> byId = coursePicRepository.findById(courseId);
+        if (byId.isPresent()){
+            return byId.get();
+        }
+        return null;
+    }
+    @Transactional
+    public ResponseResult deleteCousePic(String courseId) {
+        long l = coursePicRepository.deleteByCourseid(courseId);
+        if (l>0){
+            return new ResponseResult(CommonCode.SUCCESS);
+        }
+        return new ResponseResult(CommonCode.FAIL);
     }
 }
