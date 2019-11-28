@@ -1,5 +1,5 @@
 server:
-  port: 31001
+  port: ${PORT:31001}
 spring:
   application:
     name: xc-service-manage-cms
@@ -17,3 +17,13 @@ spring:
     cache: false
     settings:
       template_update_delay: 0
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defautZone: ${EUREKA_SERVER:http://localhost:50102/eureka/}
+  instance:
+    prefer-ip-address: true
+    ip-address: ${IP_ADDRESS:127.0.0.1}
+    instance-id: ${spring.application.name}:${server.port} #指定实例id
