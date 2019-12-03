@@ -6,10 +6,12 @@ import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.xuecheng.framework.domain.cms.CmsConfig;
 import com.xuecheng.framework.domain.cms.CmsPage;
+import com.xuecheng.framework.domain.cms.CmsSite;
 import com.xuecheng.framework.domain.cms.CmsTemplate;
 import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
 import com.xuecheng.framework.domain.cms.response.CmsCode;
 import com.xuecheng.framework.domain.cms.response.CmsPageResult;
+import com.xuecheng.framework.domain.cms.response.CmsPostPageResult;
 import com.xuecheng.framework.exception.ExceptionCast;
 import com.xuecheng.framework.model.response.CommonCode;
 import com.xuecheng.framework.model.response.QueryResponseResult;
@@ -17,6 +19,7 @@ import com.xuecheng.framework.model.response.QueryResult;
 import com.xuecheng.framework.model.response.ResponseResult;
 import com.xuecheng.manage_cms.config.RabbitConfig;
 import com.xuecheng.manage_cms.dao.CmsPageRepository;
+import com.xuecheng.manage_cms.dao.CmsSiteRepository;
 import com.xuecheng.manage_cms.dao.CmsconfigRepository;
 import com.xuecheng.manage_cms.dao.CmstemplateRepository;
 import freemarker.cache.StringTemplateLoader;
@@ -67,6 +70,8 @@ public class PageService {
     private GridFSBucket gridFSBucket;
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private CmsSiteRepository cmsSiteRepository;
     /**
      * 页面查询方法
      * @param page 页码，从1开始记数
@@ -298,5 +303,40 @@ public class PageService {
         cmsPage.setHtmlFileId(objectId.toHexString());
         cmsPageRepository.save(cmsPage);
         return cmsPage;
+    }
+    //保存页面
+    public CmsPageResult save(CmsPage cmsPage) {
+        //判断页面是否存在
+        CmsPage byPageNameAndSiteIdAndPageWebPath = cmsPageRepository.findByPageNameAndSiteIdAndPageWebPath(cmsPage.getPageName(), cmsPage.getSiteId(), cmsPage.getPageWebPath());
+        if (byPageNameAndSiteIdAndPageWebPath!=null){
+            //更新
+            return edit(byPageNameAndSiteIdAndPageWebPath.getPageId(),cmsPage);
+        }
+        return add(cmsPage);
+    }
+    //页面一键发布
+    public CmsPostPageResult postPageQuick(CmsPage cmsPage) {
+        //页面信息存储到cmspage集合
+        CmsPageResult save = this.save(cmsPage);
+        if (!save.isSuccess()){
+            ExceptionCast.cast(CommonCode.FAIL);
+        }
+        String pageId = save.getCmsPage().getPageId();
+        //页面发布
+        ResponseResult post = this.post(pageId);
+        if (!post.isSuccess()){
+            ExceptionCast.cast(CommonCode.FAIL);
+        }
+        //瓶装页面url
+        //取出站点ID
+        CmsPage cmsPage1 = save.getCmsPage();
+        String siteId = cmsPage1.getSiteId();
+        Optional<CmsSite> byId = cmsSiteRepository.findById(siteId);
+        if (!byId.isPresent()){
+            ExceptionCast.cast(CommonCode.FAIL);
+        }
+        CmsSite cmsSite = byId.get();
+        String pageUrl=cmsSite.getSiteDomain()+cmsSite.getSiteWebPath()+cmsPage1.getPageWebPath()+cmsPage1.getPageName();
+        return new CmsPostPageResult(CommonCode.SUCCESS,pageUrl);
     }
 }

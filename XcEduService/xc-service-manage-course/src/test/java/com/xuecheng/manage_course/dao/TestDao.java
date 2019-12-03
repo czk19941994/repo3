@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -38,7 +39,12 @@ public class TestDao {
     }
     @Test
     public void testFindTeachplan(){
-        TeachplanNode teachplanNode = teachplanMapper.selectList("4028e581617f945f01617f9dabc40000");
+        TeachplanNode teachplanNode = teachplanMapper.selectList("");
         System.out.println(teachplanNode);
+    }
+    @Test
+    public  void  test1(){
+        List<TeachplanNode> select = teachplanMapper.select();
+        System.out.printf(select.toString());
     }
 }
