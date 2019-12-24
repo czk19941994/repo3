@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3f78d325-6d62-4a17-90a5-57fe008a4463" name="Default Changelist" comment="" />
+    <list default="true" id="3f78d325-6d62-4a17-90a5-57fe008a4463" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../XcEduService/xc-service-search/src/main/java/com/xuecheng/search/service/EsCourseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../XcEduService/xc-service-search/src/main/java/com/xuecheng/search/service/EsCourseService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../XcEduService/xc-service-search/target/classes/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../XcEduService/xc-service-search/target/classes/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,6 +38,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -52,10 +60,11 @@
     <option name="skipTests" value="true" />
   </component>
   <component name="ProjectId" id="1QVyZlNvYd30pW9waujguwoBrqJ" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../XcEduService" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Demo" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.52169985" />
@@ -86,10 +95,22 @@
       <workItem from="1567870121323" duration="14513000" />
       <workItem from="1567916148370" duration="3973000" />
       <workItem from="1567921865849" duration="5789000" />
+      <workItem from="1576671502574" duration="66000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

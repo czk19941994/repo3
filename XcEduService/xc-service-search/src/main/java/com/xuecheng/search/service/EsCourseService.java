@@ -1,5 +1,4 @@
 package com.xuecheng.search.service;
-
 import com.xuecheng.framework.domain.course.CoursePub;
 import com.xuecheng.framework.domain.search.CourseSearchParam;
 import com.xuecheng.framework.model.response.CommonCode;
@@ -9,21 +8,22 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.text.Text;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 @Service
 public class EsCourseService {
     @Value("${xuecheng.course.index}")
@@ -31,9 +31,11 @@ public class EsCourseService {
     @Value("${xuecheng.course.type}")
     private String type;
     @Value("${xuecheng.course.source_field}")
-    private  String source_filed;
+    private String source_filed;
     @Autowired
     private RestHighLevelClient restHighLevelClient;
+    private HighlightBuilder highlightBuilder;
+
     //配置过滤原字段
     //课程搜索
     public QueryResponseResult<CoursePub> list(int page, int size, CourseSearchParam courseSearchParam) {
@@ -47,7 +49,7 @@ public class EsCourseService {
         searchSourceBuilder.fetchSource(split,new String[]{});
         //将sourcebuilder设置
         //搜索条件
-        //创建不二查询对象
+        //创建布尔查询对象
         BoolQueryBuilder boolQueryBuilder= QueryBuilders.boolQuery();
         //根据关键字搜索
         if (StringUtils.isNotEmpty(courseSearchParam.getKeyword())){
@@ -68,6 +70,24 @@ public class EsCourseService {
             boolQueryBuilder.filter(QueryBuilders.termQuery("grade",courseSearchParam.getGrade()));
         }
         searchSourceBuilder.query(boolQueryBuilder);
+        //设置分页参数
+        if (page<=0){
+            page=1;
+        }
+        if (size<0){
+            size=12;
+        }
+        int from=(page-1)*size;
+        searchSourceBuilder.from(from);
+        searchSourceBuilder.size(size);
+        //设置高亮
+        HighlightBuilder highlightBuilder=new HighlightBuilder();
+        highlightBuilder.preTags("<font class='eslight'>");
+        highlightBuilder.postTags("</font>");
+        //设置高亮字段
+        highlightBuilder.fields().add(new HighlightBuilder.Field("name"));
+        searchSourceBuilder.highlighter(highlightBuilder);
+
         searchRequest.source(searchSourceBuilder);
         //定义封装结果集
         QueryResult<CoursePub> queryResult=new QueryResult<>();
@@ -86,6 +106,19 @@ public class EsCourseService {
                 CoursePub coursePub=new CoursePub();
                 Map<String, Object> sourceAsMap = hit.getSourceAsMap();
                 String name = (String)sourceAsMap.get("name");
+                //去高亮字段name
+                Map<String, HighlightField> highlightFields = hit.getHighlightFields();
+                if (highlightFields!=null){
+                    HighlightField name1 = highlightFields.get("name");
+                    if (name1!=null){
+                        Text[] fragments = name1.fragments();
+                        StringBuffer stringBuffer=null;
+                        for (Text fragment : fragments) {
+                            stringBuffer.append(fragment);
+                        }
+                        name=stringBuffer.toString();
+                    }
+                }
                 coursePub.setName(name);
                 //图片
                 String pic = (String) sourceAsMap.get("pic");
