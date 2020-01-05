@@ -25,6 +25,16 @@ public class MediaUploadService {
     @Value("${xc-service-manage-media.upload-location}")
     private String upload_location;
     //文件上传注册，检查文件是否存在
+
+    /**
+     *
+     * @param fileMd5
+     * @param fileName
+     * @param fileSize
+     * @param mimeType
+     * @param fileExt
+     * @return
+     */
     public ResponseResult register(String fileMd5, String fileName, Long fileSize, String mimeType, String fileExt) {
         /**
          * 根据文件md5得到文件路径
@@ -162,7 +172,7 @@ public class MediaUploadService {
         mediaFile.setFileName(fileMd5+"."+fileExt);
         mediaFile.setFileOriginalName(fileName);
         //文件保存的相对路径
-        String filePath1="fileMd5.substring(0,1)+\"/\"+fileMd5.substring(1,2)+\"/\"+fileMd5+\"/\"+fileMd5+\".\"+fileExt";
+        String filePath1="fileMd5.substring(0,1)+\"/\"+fileMd5.substring(1,2)+\"/\"+fileMd5+\"/\"+fileMd5+\"";
         mediaFile.setFilePath(filePath1);
         mediaFile.setFileSize(fileSize);
         mediaFile.setUploadTime(new Date());
