@@ -4,6 +4,7 @@ import com.xuecheng.api.course.CourseControllerApi;
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.course.CoursePic;
 import com.xuecheng.framework.domain.course.Teachplan;
+import com.xuecheng.framework.domain.course.TeachplanMedia;
 import com.xuecheng.framework.domain.course.ext.CourseView;
 import com.xuecheng.framework.domain.course.ext.TeachplanNode;
 import com.xuecheng.framework.domain.course.response.CoursePublishResult;
@@ -77,5 +78,10 @@ public class CourseController implements CourseControllerApi {
 
         //将状态标位已发布
         return courseService.publish(courseId);
+    }
+    @PostMapping("/savemedia")
+    @Override
+    public ResponseResult saveMedia(@RequestBody TeachplanMedia teachplanMedia) {
+        return courseService.saveMedia(teachplanMedia);
     }
 }

@@ -7,6 +7,7 @@ import com.xuecheng.framework.domain.cms.response.CmsPostPageResult;
 import com.xuecheng.framework.domain.course.*;
 import com.xuecheng.framework.domain.course.ext.CourseView;
 import com.xuecheng.framework.domain.course.ext.TeachplanNode;
+import com.xuecheng.framework.domain.course.response.CourseCode;
 import com.xuecheng.framework.domain.course.response.CoursePublishResult;
 import com.xuecheng.framework.exception.ExceptionCast;
 import com.xuecheng.framework.model.response.CommonCode;
@@ -47,6 +48,8 @@ public class CourseService {
     private CoursePubRepository coursePubRepository;
     @Autowired
     private CmsPageClient cmsPageClient;
+    @Autowired
+    private TeachPlanMediaRepository teachPlanMediaRepository;
     @Value("${course‐publish.dataUrlPre}")
     private String publish_dataUrlPre;
     @Value("${course‐publish.pagePhysicalPath}")
@@ -59,6 +62,7 @@ public class CourseService {
     private String publish_templateId;
     @Value("${course‐publish.previewUrl}")
     private String previewUrl;
+
     //查询课程计划
     public TeachplanNode findTeachplanList(String courseId){
         return teachplanMapper.selectList(courseId);
@@ -327,5 +331,42 @@ public class CourseService {
         coursePub1.setPubTime(format);
         coursePubRepository.save(coursePub1);
         return coursePub1;
+    }
+
+    /**
+     * 视频与课程相关联
+     * @param teachplanMedia
+     * @return
+     */
+    public ResponseResult saveMedia(TeachplanMedia teachplanMedia) {
+        if (teachplanMedia==null||StringUtils.isNotEmpty(teachplanMedia.getTeachplanId())){
+            ExceptionCast.cast(CommonCode.INVALID_PARA);
+        }
+        //查询课程计划
+        String teachplanId = teachplanMedia.getTeachplanId();
+        Optional<Teachplan> byId = teachplanRepository.findById(teachplanId);
+        if (!byId.isPresent()){
+            ExceptionCast.cast(CommonCode.INVALID_PARA);
+        }
+        Teachplan teachplan = byId.get();
+        String grade = teachplan.getGrade();
+        if (StringUtils.isEmpty(grade)||!grade.equals("3")){
+            ExceptionCast.cast(CourseCode.COURSE_MEDIA_TEACHPLAN_GRADEERROR);
+        }
+        Optional<TeachplanMedia> byId1 = teachPlanMediaRepository.findById(teachplanId);
+        TeachplanMedia teachplanMedia1=null;
+        if (byId1.isPresent()){
+            teachplanMedia1=byId1.get();
+        }else {
+            teachplanMedia1=new TeachplanMedia();
+        }
+        //将其保存到数据库
+        teachplanMedia1.setCourseId(teachplan.getCourseid());
+        teachplanMedia1.setMediaId(teachplanMedia.getMediaId());
+        teachplanMedia1.setMediaFileOriginalName(teachplanMedia.getMediaFileOriginalName());
+        teachplanMedia1.setMediaUrl(teachplanMedia.getMediaUrl());
+        teachplanMedia1.setTeachplanId(teachplanMedia.getTeachplanId());
+        teachPlanMediaRepository.save(teachplanMedia1);
+        return new ResponseResult(CommonCode.SUCCESS);
     }
 }

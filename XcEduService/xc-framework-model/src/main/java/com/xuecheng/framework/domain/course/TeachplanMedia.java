@@ -30,6 +30,7 @@ public class TeachplanMedia implements Serializable {
 
     @Column(name="media_url")
     private String mediaUrl;
+    @Column(name = "course_id")
     private String courseId;
 
 }
