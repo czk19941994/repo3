@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +51,8 @@ public class CourseService {
     private CmsPageClient cmsPageClient;
     @Autowired
     private TeachPlanMediaRepository teachPlanMediaRepository;
+    @Autowired
+    private TeachPlanMediaPubRepository teachPlanMediaPubRepository;
     @Value("${course‐publish.dataUrlPre}")
     private String publish_dataUrlPre;
     @Value("${course‐publish.pagePhysicalPath}")
@@ -269,8 +272,35 @@ public class CourseService {
         CoursePub coursePub1 = saveCoursePub(courseId, coursePub);
         //缓存课程信息
         String pageUrl = cmsPostPageResult.getPageUrl();
+        //向teachplanmedia中保存课程信息
+        saveTeachplanMediaPub(courseId);
+        //
         return new CoursePublishResult(CommonCode.SUCCESS,pageUrl);
     }
+
+    /**
+     * /向teachplanMediaPub中保存媒资信息
+     * @param courseId
+     */
+    //向teachplanMediaPub中保存媒资信息
+    private void saveTeachplanMediaPub(String courseId){
+        //先删除里面的数据
+        teachPlanMediaPubRepository.deleteByCourseId(courseId);
+        //在teachplanMedia中查询
+        List<TeachplanMedia> teachplanMediaList = teachPlanMediaRepository.findByCourseId(courseId);
+        //插入到pub中
+        List<TeachplanMediaPub> teachplanMediaPubs=new ArrayList<>();
+        for (TeachplanMedia teachplanMedia : teachplanMediaList) {
+            TeachplanMediaPub teachplanMediaPub=new TeachplanMediaPub();
+            BeanUtils.copyProperties(teachplanMedia,teachplanMediaPub);
+            //添加时间戳，自动保存
+            teachplanMediaPub.setTimestamp(new Date());
+            teachplanMediaPubs.add(teachplanMediaPub);
+        }
+        //保存
+        teachPlanMediaPubRepository.saveAll(teachplanMediaPubs);
+    }
+
     public CourseBase saveCoursePublishState(String courseId){
         Optional<CourseBase> byId = courseBaseRepository.findById(courseId);
         if (!byId.isPresent()){
